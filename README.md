@@ -2,11 +2,13 @@
 Custom Java code used in HT large scale search
 
 ##Draft in progress
-## TODO:  Research why we use Lucence41PostingsFormat as base class instead of a later one
+
 
 ## Files
 The file **HTPostingsFormatWrapper.java** enables HathiTrust search to use less memory for the OCR fields.  
 The file **org.apache.lucene.codecs.PostingsFormat** is a one-line file (aside from the license) that tells the SPI loader to load the HTPostingsFormatWrapper.
+
+## Explanation of code
 
 ## What is the problem we are trying to solve
 This code reduces the memory use of a Solr index.  Specificly it reduces the size of the xxx file, which is the in-memory index to the indexes on disk.
@@ -17,8 +19,9 @@ REDO:
 
 
 ## Recompiling for later versions of Solr/Lucene
-
+Assuming no major changes to the API in future Solr versions the main change would be to update the
 
 ## Links to more background
 
 Re: SPI loader :https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html?is-external=true
+https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description
