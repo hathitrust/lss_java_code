@@ -19,27 +19,63 @@ The "tip" file is a Lucene data structure that is read into memory and used as a
 
 
 ## Explanation of code
+
 The code instantiates a postings format with HT specific minimum and maximum block sizes (200,398) instead of the default which is (25,48)(See BlockTreeTermsWriter.java DEFAULT_MIN_BLOCK_SIZE and DEFAULT_MAX_BLOCK_SIZE
+
+These numbers should produce a "tip" file with about 1/8th of the memory footprint of a "tip" file created with the default (25 * 8 = 200, the new minimum block size). The max block size  is set to  >= 2*(min-1).
 
 public  final class HTPostingsFormatWrapper extends PostingsFormat  {
      PostingsFormat pf = new Lucene41PostingsFormat(200,398);
 
-##TODO: change the above to Lucene50 and modify and test code.  Running strings on the class file in production shows the string Lucene50 not 41PostingsFormat...
 
 
 ## Deployment and Use
-REDO:
-1) Put the attached "HTPostingsFormatWrapper.jar" file in the lib directory for your Solr coresor2) Compile the attached "HTPostingsFormatWrapper.java"  and create a fileMETA-INF/services/org.apache.lucene.codecs.PostingsFormatwith the following content:	"org.apache.lucene.codecs.HTPostingsFormatWrapper"You can use the attached "org.apache.lucene.codecs.PostingsFormat" file.You then need to either put them on the classpath or compile to a jar file and place that jar in the lib directory for your solr cores.
+
+Describe how to create the jar file with the proper META-INF here
+
+Old description needs rewriting
+Compile  "HTPostingsFormatWrapper.java"
+
+Too long since I created a jar file by hand.  Check what Eclipse/Intellij does?
+
+TODO: manually recreate the steps to make a jar with both the class file and services file
+
+is this right?
+jar uf jar-file input-file(s)
+jar uf META-INF/services/org.apache.lucene.codecs.PostingsFormat
+
+
+
+jar -tvf HTPostingsFormatWrapper.jar
+     0 Thu Aug 10 12:12:42 EDT 2017 META-INF/
+    69 Thu Aug 10 12:12:42 EDT 2017 META-INF/MANIFEST.MF
+     0 Thu Aug 10 12:10:48 EDT 2017 META-INF/services/
+   842 Thu Aug 10 12:10:48 EDT 2017 META-INF/services/org.apache.lucene.codecs.PostingsFormat
+     0 Thu Aug 10 12:09:14 EDT 2017 org/
+     0 Thu Aug 10 12:09:14 EDT 2017 org/apache/
+     0 Thu Aug 10 12:09:14 EDT 2017 org/apache/lucene/
+     0 Thu Aug 10 12:09:20 EDT 2017 org/apache/lucene/codecs/
+  1132 Thu Aug 10 12:00:42 EDT 2017 org/apache/lucene/codecs/HTPostingsFormatWrapper.class
 
 
 ## Recompiling for later versions of Solr/Lucene
+
+I aways check the release notes for changes between the version we are running on and any new version we want to upgrade to try to determine if there are any significant changes.  
 Assuming no major changes to the API in future Solr versions the main change would be to update the following line to the appropriate newer PostingsFormat:
 
-PostingsFormat pf = new Lucene41PostingsFormat(200,398);
+PostingsFormat pf = new Lucene50PostingsFormat(200,398);
 
-Note that this is not always the latest postings format as some have special purposes.
-Question about whether we ever need to change the numbers?
-Check Mikes email
+After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has remained stable.  However the best thing to check besides release notes is the JavaDoc for the base PostingsFormat class.  For example for Solr 8.3 (http://lucene.apache.org/core/8_3_0/core/org/apache/lucene/codecs/PostingsFormat.html) you can see in the JavaDoc that the two "Direct Known Subclasses" are Lucene50PostingsFormat and PerFieldPostingsFormat.  If there were a Lucene83PostingsFormat listed, it would be the one to use.
+
+
+## Links to more background
+
+Re: SPI loader :https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html?is-external=true
+https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description
+https://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-td4178472.html
+https://lucene.472066.n3.nabble.com/How-to-configure-Solr-PostingsFormat-block-size-td4179029.html
+
+From Mike McCandless:
 
 "The first int to Lucene41PostingsFormat is the min block size (default
 25) and the second is the max (default 48) for the block tree terms
@@ -53,12 +89,7 @@ max=398?  However, block tree should have been more RAM efficient than
 additional details about the block structure of your terms indices...
 
 Mike McCandless"
+
 ##TODO: run checkindex --verbose on a recent snap (so as not to affect production)
 See if it gives any clues about block structure.
 
-## Links to more background
-
-Re: SPI loader :https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html?is-external=true
-https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description
-https://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-td4178472.html
-https://lucene.472066.n3.nabble.com/How-to-configure-Solr-PostingsFormat-block-size-td4179029.html
