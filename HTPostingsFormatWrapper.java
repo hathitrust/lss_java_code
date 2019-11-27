@@ -25,7 +25,7 @@ import org.apache.lucene.codecs.perfield.PerFieldPostingsFormat; // javadocs
 import org.apache.lucene.index.SegmentWriteState;
 import org.apache.lucene.index.SegmentReadState;
 import org.apache.lucene.util.NamedSPILoader;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat;
+import org.apache.lucene.codecs.lucene50.Lucene50PostingsFormat;
 /** 
  *  Wrapper class suggested by Hoss to facilitate loading a Lucene41PostingsFormat 
  *  with non-default min and max Block size params
