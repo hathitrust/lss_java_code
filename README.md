@@ -33,22 +33,22 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
 
 You need to create a special jar file.
 
-Compile  "HTPostingsFormatWrapper.java"
-Copy the HTPostingsFormatWrapper.class file to a new empty directory
+1.   Compile  "HTPostingsFormatWrapper.java"
+2.   Copy the HTPostingsFormatWrapper.class file to a new empty directory
 
-In that directory create the following subdirectories
+3.    In that directory create the following subdirectories
 
-META-INF
-META-INF/services
-org/apache/lucene/codecs
+* META-INF
+* META-INF/services
+* org/apache/lucene/codecs
 
-put the HTPostingsFormatWrapper.class file in org/apache/lucene/codecs
-put the org.apache.lucene.codecs.PostingsFormat in META-INF/services
+4.   Put the HTPostingsFormatWrapper.class file in org/apache/lucene/codecs
+5.   Put the org.apache.lucene.codecs.PostingsFormat in META-INF/services
 
-create a jar
-"jar -cf HTPostingsFormat.jar META-INF META-INF/services/ META-INF/services/org.apache.lucene.codecs.PostingsFormat  org org/apache/lucene/codecs/HTPostingsFormatWrapper.class"
+6. create a jar
+```jar -cf HTPostingsFormat.jar META-INF META-INF/services/ META-INF/services/org.apache.lucene.codecs.PostingsFormat  org org/apache/lucene/codecs/HTPostingsFormatWrapper.class```
 
-
+```
 jar -tvf HTPostingsFormatWrapper.jar
      0 Thu Aug 10 12:12:42 EDT 2017 META-INF/
     69 Thu Aug 10 12:12:42 EDT 2017 META-INF/MANIFEST.MF
@@ -59,7 +59,7 @@ jar -tvf HTPostingsFormatWrapper.jar
      0 Thu Aug 10 12:09:14 EDT 2017 org/apache/lucene/
      0 Thu Aug 10 12:09:20 EDT 2017 org/apache/lucene/codecs/
   1132 Thu Aug 10 12:00:42 EDT 2017 org/apache/lucene/codecs/HTPostingsFormatWrapper.class
-
+```
 
 ## Recompiling for later versions of Solr/Lucene
 
