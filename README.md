@@ -1,7 +1,7 @@
 # lss_java_code
 Custom Java code used in HT large scale search
 
-##Draft in progress
+## Draft in progress
 
 
 ## Files
@@ -42,8 +42,8 @@ You need to create a special jar file.
    * META-INF/services
    * org/apache/lucene/codecs
 
-4.   Put the HTPostingsFormatWrapper.class file in org/apache/lucene/codecs
-5.   Put the org.apache.lucene.codecs.PostingsFormat in META-INF/services
+4.   Put the **HTPostingsFormatWrapper.class** file in **org/apache/lucene/codecs**
+5.   Put the *org.apache.lucene.codecs.PostingsFormat** file in **META-INF/services**
 
 6.   Create a jar:
 
