@@ -38,7 +38,7 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
   
   //values suggested by McCandless email of Jan 10 2015
   //http://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-tt4178472.html
-   PostingsFormat pf = new Lucene41PostingsFormat(200,398);
+   PostingsFormat pf = new Lucene50PostingsFormat(200,398);
   
   public HTPostingsFormatWrapper() {
     super("HTPostingsFormatWrapper");
