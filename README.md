@@ -95,10 +95,10 @@ After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has rem
 
 ## Links to more background
 
-Re: SPI loader :https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html?is-external=true
-https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description
-https://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-td4178472.html
-https://lucene.472066.n3.nabble.com/How-to-configure-Solr-PostingsFormat-block-size-td4179029.html
+* Re: SPI loader :https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html?is-external=true
+* https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description
+* https://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-td4178472.html
+* https://lucene.472066.n3.nabble.com/How-to-configure-Solr-PostingsFormat-block-size-td4179029.html
 
 From Mike McCandless:
 
