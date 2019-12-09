@@ -12,10 +12,19 @@ The file **org.apache.lucene.codecs.PostingsFormat** is a one-line file (aside f
 ## What is the problem we are trying to solve
 This code reduces the memory use of a Solr index.  Specificly it reduces the size of the tip file, which is the in-memory index to the indexes on disk.
 
-Because HathiTrust has volumes in over 400 languages, dirty OCR, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms.  There is one index file that contains an entry for every term called the "tim" file.  Lucene has an in-memory index to the "tim" file for a fraction of the terms, with pointers to the "tim" file
+Because HathiTrust has volumes in over 400 languages, dirty OCR, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
 
+Prior to Solr 4 there were settings in solrconfig.xml that could be used to reduce the memory impact of large numbers of terms by changing N ( See https://www.hathitrust.org/blogs/large-scale-search/too-many-words  and https://www.hathitrust.org/blogs/large-scale-search/too-many-words-again for background and how we solved this problem prior to Solr 4)
 
-The "tip" file is a Lucene data structure that is read into memory and used as an in memory index to the index (tim) file. The "tim" file has one entry for every term in the index (for every field in the index) See https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description. 
+In Solr 4 a much more efficient index struture was adopted using FST's and the ability to change settings in solrconfig.xml to deal with a very large number of unique terms was removed (Because no one but us seems to have this order of magnitude of unique terms).  
+
+As a replacement for making a change in the solrconfig.xml file we  need this Solr "plugin".
+
+ In Solr 4 and above there is one index file that contains an entry for every term called the "tim" file.  Lucene has an in-memory index to the "tim" file called the "tip" file.  The "tip" file holds pointers to the blocks in the "tim" file.  
+
+With the default block size, the "tip" file holds too many pointers and results in very large memory use. This code reduces the size of the "tip" file by increasing the block size to about 8 times the default block size.  This trades larger sequential disk reads for less memory use. 
+
+See https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description. 
 
 
 ## Explanation of code
@@ -31,7 +40,7 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
 
 ## Deployment and Use
 
-You need to create a special jar file.
+### Creating a special jar file.
 
 1.   Compile  "HTPostingsFormatWrapper.java"
 2.   Copy the HTPostingsFormatWrapper.class file to a new empty directory
@@ -64,6 +73,14 @@ jar -tvf HTPostingsFormatWrapper.jar
      0 Thu Aug 10 12:09:14 EDT 2017 org/apache/lucene/
      0 Thu Aug 10 12:09:20 EDT 2017 org/apache/lucene/codecs/
   1132 Thu Aug 10 12:00:42 EDT 2017 org/apache/lucene/codecs/HTPostingsFormatWrapper.class
+```
+### Deployment
+
+Put the resulting jar file in the SOLR_HOME/lib directory.  In production we put this in a shared directory and put symlinks in the directory for each core.  
+For example 
+```
+/htsolr/lss/shared/lib/HTPostingsFormat.jar
+/htsolr/lss/cores/1/core-1x/lib -> /htsolr/serve/lss-shared/lib
 ```
 
 ## Recompiling for later versions of Solr/Lucene
