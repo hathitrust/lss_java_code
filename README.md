@@ -31,19 +31,22 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
 
 ## Deployment and Use
 
-Describe how to create the jar file with the proper META-INF here
+You need to create a special jar file.
 
-Old description needs rewriting
 Compile  "HTPostingsFormatWrapper.java"
+Copy the HTPostingsFormatWrapper.class file to a new empty directory
 
-Too long since I created a jar file by hand.  Check what Eclipse/Intellij does?
+In that directory create the following subdirectories
 
-TODO: manually recreate the steps to make a jar with both the class file and services file
+META-INF
+META-INF/services
+org/apache/lucene/codecs
 
-is this right?
-jar uf jar-file input-file(s)
-jar uf META-INF/services/org.apache.lucene.codecs.PostingsFormat
+put the HTPostingsFormatWrapper.class file in org/apache/lucene/codecs
+put the org.apache.lucene.codecs.PostingsFormat in META-INF/services
 
+create a jar
+"jar -cf HTPostingsFormat.jar META-INF META-INF/services/ META-INF/services/org.apache.lucene.codecs.PostingsFormat  org org/apache/lucene/codecs/HTPostingsFormatWrapper.class"
 
 
 jar -tvf HTPostingsFormatWrapper.jar
