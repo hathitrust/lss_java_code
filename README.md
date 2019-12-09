@@ -38,15 +38,20 @@ You need to create a special jar file.
 
 3.    In that directory create the following subdirectories
 
-* META-INF
-* META-INF/services
-* org/apache/lucene/codecs
+   * META-INF
+   * META-INF/services
+   * org/apache/lucene/codecs
 
 4.   Put the HTPostingsFormatWrapper.class file in org/apache/lucene/codecs
 5.   Put the org.apache.lucene.codecs.PostingsFormat in META-INF/services
 
-6. create a jar
-```jar -cf HTPostingsFormat.jar META-INF META-INF/services/ META-INF/services/org.apache.lucene.codecs.PostingsFormat  org org/apache/lucene/codecs/HTPostingsFormatWrapper.class```
+6.   Create a jar:
+
+```
+jar -cf HTPostingsFormat.jar META-INF META-INF/services/ META-INF/services/org.apache.lucene.codecs.PostingsFormat  org org/apache/lucene/codecs/HTPostingsFormatWrapper.class
+```
+
+The resulting file should look like this:
 
 ```
 jar -tvf HTPostingsFormatWrapper.jar
