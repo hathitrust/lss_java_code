@@ -14,10 +14,17 @@ This code reduces the memory use of a Solr index.  Specificly it reduces the siz
 
 
 ## Explanation of code
+
 ```
 public  final class HTPostingsFormatWrapper extends PostingsFormat  {
-     PostingsFormat pf = new Lucene41PostingsFormat(200,398);
+  PostingsFormat pf = new Lucene50PostingsFormat(200,398);
+  
+  public HTPostingsFormatWrapper() {
+    super("HTPostingsFormatWrapper");
+  }
+ }
 ```
+
 
 The code instantiates a postings format with HT specific minimum and maximum block sizes (200,398) instead of the default which is (25,48)(See BlockTreeTermsWriter.java DEFAULT_MIN_BLOCK_SIZE and DEFAULT_MAX_BLOCK_SIZE
 
