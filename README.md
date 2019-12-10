@@ -1,12 +1,10 @@
 # lss_java_code
 Custom Java code used in HT large scale search
 
-## Draft in progress
-
 
 ## Files
 The file **HTPostingsFormatWrapper.java** enables HathiTrust search to use less memory for the OCR fields.  
-The file **org.apache.lucene.codecs.PostingsFormat** is a one-line file (aside from the license) that tells the SPI loader to load the HTPostingsFormatWrapper.
+The file **org.apache.lucene.codecs.PostingsFormat** is a one-line file (aside from the license) that tells the Java SPI loader to load the HTPostingsFormatWrapper.
 
 
 ## What is the problem we are trying to solve
@@ -22,19 +20,17 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
   public HTPostingsFormatWrapper() {
     super("HTPostingsFormatWrapper");
   }
- }
+ ...
 ```
 
 
-The code instantiates a postings format with HT specific minimum and maximum block sizes (200,398) instead of the default which is (25,48)(See BlockTreeTermsWriter.java DEFAULT_MIN_BLOCK_SIZE and DEFAULT_MAX_BLOCK_SIZE
+The code instantiates a postings format with HT specific minimum and maximum block sizes (200,398) instead of the default which is (25,48).  (See BlockTreeTermsWriter.java DEFAULT_MIN_BLOCK_SIZE and DEFAULT_MAX_BLOCK_SIZE.)
 
 In Solr 4 and above there is one index file that contains an entry for every term called the "tim" file.  Lucene has an in-memory index to the "tim" file called the "tip" file.  The "tip" file holds pointers to the blocks in the "tim" file.  
 
-With the default block size, the "tip" file holds too many pointers and results in very large memory use. This code reduces the size of the "tip" file by increasing the block size to about 8 times the default block size.  Larger block size means smaller number of total blocks needed, which means a smaller number of pointers.
+With the default block size, the "tip" file holds too many pointers and results in very large memory use. This code reduces the size of the "tip" file by increasing the block size to about 8 times the default block size.  Larger block size means smaller number of total blocks needed, which means a smaller number of pointers and thus less memory use.
 
 See *Background details* (below) for more details
-
-
 
 ## Deployment and Use
 
@@ -42,7 +38,6 @@ See *Background details* (below) for more details
 
 1.   Compile  "HTPostingsFormatWrapper.java"
 2.   Copy the HTPostingsFormatWrapper.class file to a new empty directory
-
 3.    In that directory create the following subdirectories
 
    * META-INF
@@ -50,7 +45,7 @@ See *Background details* (below) for more details
    * org/apache/lucene/codecs
 
 4.   Put the **HTPostingsFormatWrapper.class** file in **org/apache/lucene/codecs**
-5.   Put the *org.apache.lucene.codecs.PostingsFormat** file in **META-INF/services**
+5.   Put the **org.apache.lucene.codecs.PostingsFormat** file in **META-INF/services**
 
 6.   Create a jar:
 
@@ -92,31 +87,13 @@ After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has rem
 
 ## Background details
 
-Because HathiTrust has volumes in over 400 languages, dirty OCR, and we bigrams and unigrams for CJK and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
+Because HathiTrust has volumes in over 400 languages, dirty OCR, we bigrams and unigrams for CJK, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
 
 Prior to Solr 4 there were settings in solrconfig.xml that could be used to reduce the memory impact of large numbers of terms by changing N ( See https://www.hathitrust.org/blogs/large-scale-search/too-many-words  and https://www.hathitrust.org/blogs/large-scale-search/too-many-words-again for background and how we solved this problem prior to Solr 4)
 
 In Solr 4 a much more efficient index struture was adopted using FST's and the ability to change settings in solrconfig.xml to deal with a very large number of unique terms was removed (Because no one but us seems to have this order of magnitude of unique terms).  
 
 As a replacement for making a change in the solrconfig.xml file we  need this Solr "plugin" which uses the JAVA Service Provider Interface (SPI) to tell Solr to use the provided code. See https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
-
- In Solr 4 and above there is one index file that contains an entry for every term called the "tim" file.  Lucene has an in-memory index to the "tim" file called the "tip" file.  The "tip" file holds pointers to the blocks in the "tim" file.  
-
-With the default block size, the "tip" file holds too many pointers and results in very large memory use. This code reduces the size of the "tip" file by increasing the block size to about 8 times the default block size.  This trades larger sequential disk reads for less memory use. 
-
-See https://lucene.apache.org/core/6_6_0/core/org/apache/lucene/codecs/lucene62/package-summary.html#package.description. 
-
-
-
-## Background details old
-
-Because HathiTrust has volumes in over 400 languages, dirty OCR, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
-
-Prior to Solr 4 there were settings in solrconfig.xml that could be used to reduce the memory impact of large numbers of terms by changing N ( See https://www.hathitrust.org/blogs/large-scale-search/too-many-words  and https://www.hathitrust.org/blogs/large-scale-search/too-many-words-again for background and how we solved this problem prior to Solr 4)
-
-In Solr 4 a much more efficient index struture was adopted using FST's and the ability to change settings in solrconfig.xml to deal with a very large number of unique terms was removed (Because no one but us seems to have this order of magnitude of unique terms).  
-
-As a replacement for making a change in the solrconfig.xml file we  need this Solr "plugin".
 
  In Solr 4 and above there is one index file that contains an entry for every term called the "tim" file.  Lucene has an in-memory index to the "tim" file called the "tip" file.  The "tip" file holds pointers to the blocks in the "tim" file.  
 
@@ -168,6 +145,4 @@ additional details about the block structure of your terms indices...
 
 Mike McCandless"
 
-##TODO: run checkindex --verbose on a recent snap (so as not to affect production)
-See if it gives any clues about block structure.
 
