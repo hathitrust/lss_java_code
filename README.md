@@ -87,7 +87,7 @@ After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has rem
 
 ## Background details
 
-Because HathiTrust has volumes in over 400 languages, dirty OCR, we bigrams and unigrams for CJK, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
+Because HathiTrust has volumes in over 400 languages, dirty OCR, we use bigrams and unigrams for CJK, and we use CommonGrams for efficient phrase search, the indexes tend to have over 2 billion unique terms. There is an index file which contains one entry for each unique term in an index.  In order to speed up access to this file there is a second file which is read into memory and contains pointers to the file on disk for every Nth term.
 
 Prior to Solr 4 there were settings in solrconfig.xml that could be used to reduce the memory impact of large numbers of terms by changing N ( See https://www.hathitrust.org/blogs/large-scale-search/too-many-words  and https://www.hathitrust.org/blogs/large-scale-search/too-many-words-again for background and how we solved this problem prior to Solr 4)
 
