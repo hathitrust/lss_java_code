@@ -36,16 +36,19 @@ See *Background details* (below) for more details
 
 ### Creating a special jar file.
 
+Before creating the jar file you should check the Java version accepted by Solr. For example, for Solr 8.11 the recommended version of Java is hihger that 9, however higher than 11 the jar failed, then the maximun version of java you can use for generating the jas is 11.
+
 1.   Compile  "HTPostingsFormatWrapper.java"
 2.   Copy the HTPostingsFormatWrapper.class file to a new empty directory
 3.    In that directory create the following subdirectories
 
    * META-INF
    * META-INF/services
+   * META-INF/versions
    * org/apache/lucene/codecs
 
 4.   Put the **HTPostingsFormatWrapper.class** file in **org/apache/lucene/codecs**
-5.   Put the **org.apache.lucene.codecs.PostingsFormat** file in **META-INF/services**
+5.   Put the **org.apache.lucene.codecs.PostingsFormat** file in **META-INF/services** and in **META-INF/versions** 
 
 6.   Create a jar:
 
