@@ -25,7 +25,7 @@ import org.apache.lucene.codecs.perfield.PerFieldPostingsFormat; // javadocs
 import org.apache.lucene.index.SegmentWriteState;
 import org.apache.lucene.index.SegmentReadState;
 import org.apache.lucene.util.NamedSPILoader;
-import org.apache.lucene.codecs.lucene50.Lucene50PostingsFormat;
+import org.apache.lucene.codecs.lucene84.Lucene84PostingsFormat;
 /** 
  *  Wrapper class suggested by Hoss to facilitate loading a Lucene41PostingsFormat 
  *  with non-default min and max Block size params
@@ -38,7 +38,7 @@ public  final class HTPostingsFormatWrapper extends PostingsFormat  {
   
   //values suggested by McCandless email of Jan 10 2015
   //http://lucene.472066.n3.nabble.com/Details-on-setting-block-parameters-for-Lucene41PostingsFormat-tt4178472.html
-   PostingsFormat pf = new Lucene50PostingsFormat(200,398);
+   PostingsFormat pf = new Lucene84PostingsFormat(200,398);
   
   public HTPostingsFormatWrapper() {
     super("HTPostingsFormatWrapper");
