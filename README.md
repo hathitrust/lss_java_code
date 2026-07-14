@@ -13,7 +13,7 @@ This code reduces the memory use of a Solr index.  Specifically it reduces the s
 
 ```
 public  final class HTPostingsFormatWrapper extends PostingsFormat  {
-  PostingsFormat pf = new Lucene50PostingsFormat(200,398);
+  PostingsFormat pf = new Lucene912PostingsFormat(200,398);
   
   public HTPostingsFormatWrapper() {
     super("HTPostingsFormatWrapper");
@@ -33,12 +33,20 @@ See *Background details* (below) for more details
 
 ### Creating a special jar file.
 
-For best results, compile using the same version of Java that you will use to run Solr. For Solr 8.11, JDK 11 is recommended.
+For best results, compile using the same version of Java that you will use to run Solr. For Solr 9.10.1, 
+JDK 17 is recommended (matches the JDK bundled in the official `solr:9.10.1` Docker image).
 
 1.   Compile  "HTPostingsFormatWrapper.java"
-   * Download Lucene 8.11, Find [here](https://lucene.apache.org/core/downloads.html) Lucene releases. 
-   * Use this command to generate HTPostingsFormatWrapper.class 
-     `javac -cp lucene-8.11.2/core/lucene-core-8.11.2.jar HTPostingsFormatWrapper.java`
+   * Download Lucene 9.12, Find [here](https://lucene.apache.org/core/downloads.html) Lucene releases or extract 
+  `lucene-core-<version>.jar` directly from the `solr:<version>` Docker image at
+     `/opt/solr-<version>/server/solr-webapp/webapp/WEB-INF/lib/lucene-core-<version>.jar` - this guarantees
+   an exact match with the Lucene version actually bundled in that Solr release.
+      ```
+     docker run --name my_solr -d solr:9.10.1
+     docker cp my_solr:/opt/solr-9.10.1/server/solr-webapp/webapp/WEB-INF/lib/lucene-core-9.12.3.jar .
+     ```
+  * Use this command to generate HTPostingsFormatWrapper.class 
+    `javac --release 17 -cp lucene-core-9.12.3.jar HTPostingsFormatWrapper.java`
 2.   Copy the HTPostingsFormatWrapper.class file to a new empty directory 
 3.   In that directory create the following subdirectories
 
@@ -84,9 +92,12 @@ For example
 I always check the release notes for changes between the version we are running on and any new version we want to upgrade to try to determine if there are any significant changes.  
 Assuming no major changes to the API in future Solr versions the main change would be to update the following line to the appropriate newer PostingsFormat:
 
-PostingsFormat pf = new Lucene50PostingsFormat(200,398);
+PostingsFormat pf = new Lucene912PostingsFormat(200,398);
 
-After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has remained stable.  However, the best thing to check besides release notes is the JavaDoc for the base PostingsFormat class.  For example for Solr 8.3 (http://lucene.apache.org/core/8_3_0/core/org/apache/lucene/codecs/PostingsFormat.html) you can see in the JavaDoc that the two "Direct Known Subclasses" are Lucene50PostingsFormat and PerFieldPostingsFormat.  If there were a Lucene83PostingsFormat listed, it would be the one to use.
+After the move from Solr/Lucene 4.1 to Solr/Lucene 5, the PostingsFormat has remained stable.  
+For Solr 9.10.1 this is `org.apache.lucene.codecs.lucene912.Lucene912PostingsFormat`, and its 
+`(int, int)` constructor (min/max term block size) is unchanged from `Lucene84PostingsFormat`'s, that is 
+the class for Solr 8.11.1, and `Lucene62PostingsFormat`'s, that is for Solr 6.6.0.
 
 ## Background details
 
